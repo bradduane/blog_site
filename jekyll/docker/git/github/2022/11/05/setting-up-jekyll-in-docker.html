@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Setting up Docker and Jekyll | KiloCrumbs Blog</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Setting up Docker and Jekyll" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="We’ll setup a basic Docker installation, and use a container to run Jekyll to generate a static site blog, make a post, write a draft, and run a development server to test the blog." />
+<meta property="og:description" content="We’ll setup a basic Docker installation, and use a container to run Jekyll to generate a static site blog, make a post, write a draft, and run a development server to test the blog." />
+<link rel="canonical" href="http://0.0.0.0:4000/jekyll/docker/git/github/2022/11/05/setting-up-jekyll-in-docker.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/jekyll/docker/git/github/2022/11/05/setting-up-jekyll-in-docker.html" />
+<meta property="og:site_name" content="KiloCrumbs Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-11-05T14:25:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Setting up Docker and Jekyll" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-11-05T14:25:00-05:00","datePublished":"2022-11-05T14:25:00-05:00","description":"We’ll setup a basic Docker installation, and use a container to run Jekyll to generate a static site blog, make a post, write a draft, and run a development server to test the blog.","headline":"Setting up Docker and Jekyll","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/jekyll/docker/git/github/2022/11/05/setting-up-jekyll-in-docker.html"},"url":"http://0.0.0.0:4000/jekyll/docker/git/github/2022/11/05/setting-up-jekyll-in-docker.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/feed.xml" title="KiloCrumbs Blog" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">KiloCrumbs Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Setting up Docker and Jekyll</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2022-11-05T14:25:00-05:00" itemprop="datePublished">Nov 5, 2022
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>We’ll setup a basic Docker installation, and use a container to run Jekyll to generate a static site blog, make a post, write a draft, and run a development server to test the blog.</p>
+
+<hr />
+<p><strong>Note</strong></p>
+
+<p>Performed on Ubuntu Server 22.04.1 LTS</p>
+
+<hr />
+<h2 id="installing-docker">Installing Docker</h2>
+<p>I chose to install Docker using Docker’s apt responsitory. Full documentation here: https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+[DockerEngineDocs] Docker Engine Documentation</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get update
+<span class="nb">sudo </span>apt-get <span class="nb">install</span> <span class="se">\</span>
+    ca-certificates <span class="se">\</span>
+    curl <span class="se">\</span>
+    gnupg <span class="se">\</span>
+    lsb-release
+<span class="nb">sudo mkdir</span> <span class="nt">-p</span> /etc/apt/keyrings
+curl <span class="nt">-fsSL</span> https://download.docker.com/linux/ubuntu/gpg | <span class="nb">sudo </span>gpg <span class="nt">--dearmor</span> <span class="nt">-o</span> /etc/apt/keyrings/docker.gpg
+<span class="nb">echo</span> <span class="se">\</span>
+  <span class="s2">"deb [arch=</span><span class="si">$(</span>dpkg <span class="nt">--print-architecture</span><span class="si">)</span><span class="s2"> signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu </span><span class="se">\</span><span class="s2">
+  </span><span class="si">$(</span>lsb_release <span class="nt">-cs</span><span class="si">)</span><span class="s2"> stable"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/docker.list <span class="o">&gt;</span> /dev/null
+<span class="nb">sudo </span>apt-get update
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>docker-ce docker-ce-cli containerd.io docker-compose-plugin
+</code></pre></div></div>
+
+<h2 id="setup-jekyll">Setup Jekyll</h2>
+<p>Warning: As of this post, the latest version of the Jekyll container is missing a dependency (webrick) which is required for “jekyll serve”, so I am using 4.2.0 until this is resolved (https://github.com/envygeeks/jekyll-docker/pull/347)
+Instructions were adapted from current readme: https://github.com/envygeeks/jekyll-docker/blob/master/README.md</p>
+<h3 id="start-jekyll-for-first-time">Start Jekyll for first time</h3>
+<p>Create a directory for the jekyll data:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>jekyll
+<span class="nb">cd </span>jekyll
+</code></pre></div></div>
+<p>Fix ownership of ‘/usr/gem’ and create the new site:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">JEKYLL_VERSION</span><span class="o">=</span>4.2.0
+<span class="nb">export </span><span class="nv">site_name</span><span class="o">=</span><span class="s2">"blog.kilocrumbs.com"</span>
+
+<span class="nb">sudo </span>docker run <span class="nt">--rm</span> <span class="se">\</span>
+  <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">:/srv/jekyll"</span> <span class="se">\</span>
+  <span class="nt">-it</span> jekyll/jekyll:<span class="nv">$JEKYLL_VERSION</span> <span class="se">\</span>
+  sh <span class="nt">-c</span> <span class="s2">"chown -R jekyll /usr/gem/ &amp;&amp; jekyll new </span><span class="nv">$site_name</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<p>Test our work, start the dev server by navigating to the site directory, and running “jekyll serve”</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">JEKYLL_VERSION</span><span class="o">=</span>4.2.0
+<span class="nb">export </span><span class="nv">site_name</span><span class="o">=</span><span class="s2">"blog.kilocrumbs.com"</span>
+
+<span class="nb">sudo </span>docker run <span class="nt">--rm</span> <span class="se">\</span>
+  <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">:/srv/jekyll"</span> <span class="se">\</span>
+  <span class="nt">--publish</span> 4000:4000 <span class="se">\</span>
+  <span class="nt">-it</span> jekyll/jekyll:<span class="nv">$JEKYLL_VERSION</span> <span class="se">\</span>
+  sh <span class="nt">-c</span> <span class="s2">"cd </span><span class="nv">$site_name</span><span class="s2"> &amp;&amp; jekyll serve"</span>
+</code></pre></div></div>
+
+<p>Open new blog at http://localhost:4000</p>
+
+<h3 id="create-a-new-blog-post">Create a new Blog Post</h3>
+<p>Create a new markdown file in ‘_posts’ directory named:
+“2022-11-05-setting-up-jekyll-in-docker.md”</p>
+
+<p>File content:</p>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">layout</span><span class="pi">:</span> <span class="s">post</span>
+<span class="na">title</span><span class="pi">:</span>  <span class="s2">"</span><span class="s">Setting</span><span class="nv"> </span><span class="s">up</span><span class="nv"> </span><span class="s">Docker</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">Jekyll"</span>
+<span class="na">date</span><span class="pi">:</span>   <span class="s">2022-11-05 14:42:39 -0500</span>
+<span class="na">categories</span><span class="pi">:</span> <span class="s">jekyll docker</span>
+<span class="nn">---</span>
+<span class="gs">**Markdown content of my blog post goes here...**</span>
+</code></pre></div></div>
+
+<p>Save the file, and as long as the “jekyll serve” command is still running, reload http://localhost:4000 and see the new post.</p>
+
+<h3 id="build-site-for-publishing">Build Site for Publishing</h3>
+<p>The version of the site that is built by “jekyll serve” is unsuitable for publishing.</p>
+
+<p>Ensure the “jekyll serve” container is stopped.</p>
+
+<p>Build the Jekyll Site:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">JEKYLL_VERSION</span><span class="o">=</span>4.2.0
+<span class="nb">export </span><span class="nv">site_name</span><span class="o">=</span><span class="s2">"blog.kilocrumbs.com"</span>
+
+<span class="nb">sudo </span>docker run <span class="nt">--rm</span> <span class="se">\</span>
+  <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">:/srv/jekyll"</span> <span class="se">\</span>
+  <span class="nt">-it</span> jekyll/jekyll:<span class="nv">$JEKYLL_VERSION</span> <span class="se">\</span>
+  sh <span class="nt">-c</span> <span class="s2">"cd </span><span class="nv">$site_name</span><span class="s2"> &amp;&amp; jekyll build"</span>
+</code></pre></div></div>
+
+<h3 id="working-with-drafts">Working with Drafts</h3>
+<p>Create a _drafts directory alongside the _posts directory.
+Place your draft post file, without a date in the filename, in this directory. For example, instead of naming the file “2022-11-05-setting-up-jekyll-in-docker.md”, name it “setting-up-jekyll-in-docker.md”</p>
+
+<p>Add the “–drafts” switch when building or running the devleopment server to include drafts.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">JEKYLL_VERSION</span><span class="o">=</span>4.2.0
+<span class="nb">export </span><span class="nv">site_name</span><span class="o">=</span><span class="s2">"blog.kilocrumbs.com"</span>
+
+<span class="nb">sudo </span>docker run <span class="nt">--rm</span> <span class="se">\</span>
+  <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">:/srv/jekyll"</span> <span class="se">\</span>
+  <span class="nt">--publish</span> 4000:4000 <span class="se">\</span>
+  <span class="nt">-it</span> jekyll/jekyll:<span class="nv">$JEKYLL_VERSION</span> <span class="se">\</span>
+  sh <span class="nt">-c</span> <span class="s2">"cd </span><span class="nv">$site_name</span><span class="s2"> &amp;&amp; jekyll serve --drafts"</span>
+</code></pre></div></div>
+
+<h3 id="whats-next">What’s Next?</h3>
+<p>Next, I’ll be using Git for version control, and for storing on a GitHub repo (possibly to use with GitHub pages, or to use for automated deployment, we’ll see!)</p>
+
+  </div><a class="u-url" href="/jekyll/docker/git/github/2022/11/05/setting-up-jekyll-in-docker.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">KiloCrumbs Blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">KiloCrumbs Blog</li><li><a class="u-email" href="mailto:your-email@example.com">your-email@example.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/jekyll"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">jekyll</span></a></li><li><a href="https://www.twitter.com/jekyllrb"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">jekyllrb</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

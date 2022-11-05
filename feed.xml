@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://0.0.0.0:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://0.0.0.0:4000/" rel="alternate" type="text/html" /><updated>2022-11-05T17:36:41-05:00</updated><id>http://0.0.0.0:4000/feed.xml</id><title type="html">KiloCrumbs Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Welcome to Jekyll!</title><link href="http://0.0.0.0:4000/jekyll/update/2022/11/05/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2022-11-05T14:42:39-05:00</published><updated>2022-11-05T14:42:39-05:00</updated><id>http://0.0.0.0:4000/jekyll/update/2022/11/05/welcome-to-jekyll</id><content type="html" xml:base="http://0.0.0.0:4000/jekyll/update/2022/11/05/welcome-to-jekyll.html"><![CDATA[<p>You’ll find this post in your <code class="language-plaintext highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code class="language-plaintext highlighter-rouge">jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
+
+<!--more-->
+<p>Jekyll requires blog post files to be named according to the following format:</p>
+
+<p><code class="language-plaintext highlighter-rouge">YEAR-MONTH-DAY-title.MARKUP</code></p>
+
+<p>Where <code class="language-plaintext highlighter-rouge">YEAR</code> is a four-digit number, <code class="language-plaintext highlighter-rouge">MONTH</code> and <code class="language-plaintext highlighter-rouge">DAY</code> are both two-digit numbers, and <code class="language-plaintext highlighter-rouge">MARKUP</code> is the file extension representing the format used in the file. After that, include the necessary front matter. Take a look at the source for this post to get an idea about how it works.</p>
+
+<p>Jekyll also offers powerful support for code snippets:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+  <span class="nb">puts</span> <span class="s2">"Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+<span class="n">print_hi</span><span class="p">(</span><span class="s1">'Tom'</span><span class="p">)</span>
+<span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span></code></pre></figure>
+
+<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>]]></content><author><name></name></author><category term="jekyll" /><category term="update" /><summary type="html"><![CDATA[You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.]]></summary></entry><entry><title type="html">Setting up Docker and Jekyll</title><link href="http://0.0.0.0:4000/jekyll/docker/git/github/2022/11/05/setting-up-jekyll-in-docker.html" rel="alternate" type="text/html" title="Setting up Docker and Jekyll" /><published>2022-11-05T14:25:00-05:00</published><updated>2022-11-05T14:25:00-05:00</updated><id>http://0.0.0.0:4000/jekyll/docker/git/github/2022/11/05/setting-up-jekyll-in-docker</id><content type="html" xml:base="http://0.0.0.0:4000/jekyll/docker/git/github/2022/11/05/setting-up-jekyll-in-docker.html"><![CDATA[<p>We’ll setup a basic Docker installation, and use a container to run Jekyll to generate a static site blog, make a post, write a draft, and run a development server to test the blog.</p>
+
+<hr />
+<p><strong>Note</strong></p>
+
+<p>Performed on Ubuntu Server 22.04.1 LTS</p>
+
+<hr />
+<h2 id="installing-docker">Installing Docker</h2>
+<p>I chose to install Docker using Docker’s apt responsitory. Full documentation here: https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+[DockerEngineDocs] Docker Engine Documentation</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get update
+<span class="nb">sudo </span>apt-get <span class="nb">install</span> <span class="se">\</span>
+    ca-certificates <span class="se">\</span>
+    curl <span class="se">\</span>
+    gnupg <span class="se">\</span>
+    lsb-release
+<span class="nb">sudo mkdir</span> <span class="nt">-p</span> /etc/apt/keyrings
+curl <span class="nt">-fsSL</span> https://download.docker.com/linux/ubuntu/gpg | <span class="nb">sudo </span>gpg <span class="nt">--dearmor</span> <span class="nt">-o</span> /etc/apt/keyrings/docker.gpg
+<span class="nb">echo</span> <span class="se">\</span>
+  <span class="s2">"deb [arch=</span><span class="si">$(</span>dpkg <span class="nt">--print-architecture</span><span class="si">)</span><span class="s2"> signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu </span><span class="se">\</span><span class="s2">
+  </span><span class="si">$(</span>lsb_release <span class="nt">-cs</span><span class="si">)</span><span class="s2"> stable"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/docker.list <span class="o">&gt;</span> /dev/null
+<span class="nb">sudo </span>apt-get update
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>docker-ce docker-ce-cli containerd.io docker-compose-plugin
+</code></pre></div></div>
+
+<h2 id="setup-jekyll">Setup Jekyll</h2>
+<p>Warning: As of this post, the latest version of the Jekyll container is missing a dependency (webrick) which is required for “jekyll serve”, so I am using 4.2.0 until this is resolved (https://github.com/envygeeks/jekyll-docker/pull/347)
+Instructions were adapted from current readme: https://github.com/envygeeks/jekyll-docker/blob/master/README.md</p>
+<h3 id="start-jekyll-for-first-time">Start Jekyll for first time</h3>
+<p>Create a directory for the jekyll data:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>jekyll
+<span class="nb">cd </span>jekyll
+</code></pre></div></div>
+<p>Fix ownership of ‘/usr/gem’ and create the new site:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">JEKYLL_VERSION</span><span class="o">=</span>4.2.0
+<span class="nb">export </span><span class="nv">site_name</span><span class="o">=</span><span class="s2">"blog.kilocrumbs.com"</span>
+
+<span class="nb">sudo </span>docker run <span class="nt">--rm</span> <span class="se">\</span>
+  <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">:/srv/jekyll"</span> <span class="se">\</span>
+  <span class="nt">-it</span> jekyll/jekyll:<span class="nv">$JEKYLL_VERSION</span> <span class="se">\</span>
+  sh <span class="nt">-c</span> <span class="s2">"chown -R jekyll /usr/gem/ &amp;&amp; jekyll new </span><span class="nv">$site_name</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<p>Test our work, start the dev server by navigating to the site directory, and running “jekyll serve”</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">JEKYLL_VERSION</span><span class="o">=</span>4.2.0
+<span class="nb">export </span><span class="nv">site_name</span><span class="o">=</span><span class="s2">"blog.kilocrumbs.com"</span>
+
+<span class="nb">sudo </span>docker run <span class="nt">--rm</span> <span class="se">\</span>
+  <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">:/srv/jekyll"</span> <span class="se">\</span>
+  <span class="nt">--publish</span> 4000:4000 <span class="se">\</span>
+  <span class="nt">-it</span> jekyll/jekyll:<span class="nv">$JEKYLL_VERSION</span> <span class="se">\</span>
+  sh <span class="nt">-c</span> <span class="s2">"cd </span><span class="nv">$site_name</span><span class="s2"> &amp;&amp; jekyll serve"</span>
+</code></pre></div></div>
+
+<p>Open new blog at http://localhost:4000</p>
+
+<h3 id="create-a-new-blog-post">Create a new Blog Post</h3>
+<p>Create a new markdown file in ‘_posts’ directory named:
+“2022-11-05-setting-up-jekyll-in-docker.md”</p>
+
+<p>File content:</p>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">layout</span><span class="pi">:</span> <span class="s">post</span>
+<span class="na">title</span><span class="pi">:</span>  <span class="s2">"</span><span class="s">Setting</span><span class="nv"> </span><span class="s">up</span><span class="nv"> </span><span class="s">Docker</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">Jekyll"</span>
+<span class="na">date</span><span class="pi">:</span>   <span class="s">2022-11-05 14:42:39 -0500</span>
+<span class="na">categories</span><span class="pi">:</span> <span class="s">jekyll docker</span>
+<span class="nn">---</span>
+<span class="gs">**Markdown content of my blog post goes here...**</span>
+</code></pre></div></div>
+
+<p>Save the file, and as long as the “jekyll serve” command is still running, reload http://localhost:4000 and see the new post.</p>
+
+<h3 id="build-site-for-publishing">Build Site for Publishing</h3>
+<p>The version of the site that is built by “jekyll serve” is unsuitable for publishing.</p>
+
+<p>Ensure the “jekyll serve” container is stopped.</p>
+
+<p>Build the Jekyll Site:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">JEKYLL_VERSION</span><span class="o">=</span>4.2.0
+<span class="nb">export </span><span class="nv">site_name</span><span class="o">=</span><span class="s2">"blog.kilocrumbs.com"</span>
+
+<span class="nb">sudo </span>docker run <span class="nt">--rm</span> <span class="se">\</span>
+  <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">:/srv/jekyll"</span> <span class="se">\</span>
+  <span class="nt">-it</span> jekyll/jekyll:<span class="nv">$JEKYLL_VERSION</span> <span class="se">\</span>
+  sh <span class="nt">-c</span> <span class="s2">"cd </span><span class="nv">$site_name</span><span class="s2"> &amp;&amp; jekyll build"</span>
+</code></pre></div></div>
+
+<h3 id="working-with-drafts">Working with Drafts</h3>
+<p>Create a _drafts directory alongside the _posts directory.
+Place your draft post file, without a date in the filename, in this directory. For example, instead of naming the file “2022-11-05-setting-up-jekyll-in-docker.md”, name it “setting-up-jekyll-in-docker.md”</p>
+
+<p>Add the “–drafts” switch when building or running the devleopment server to include drafts.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">JEKYLL_VERSION</span><span class="o">=</span>4.2.0
+<span class="nb">export </span><span class="nv">site_name</span><span class="o">=</span><span class="s2">"blog.kilocrumbs.com"</span>
+
+<span class="nb">sudo </span>docker run <span class="nt">--rm</span> <span class="se">\</span>
+  <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">:/srv/jekyll"</span> <span class="se">\</span>
+  <span class="nt">--publish</span> 4000:4000 <span class="se">\</span>
+  <span class="nt">-it</span> jekyll/jekyll:<span class="nv">$JEKYLL_VERSION</span> <span class="se">\</span>
+  sh <span class="nt">-c</span> <span class="s2">"cd </span><span class="nv">$site_name</span><span class="s2"> &amp;&amp; jekyll serve --drafts"</span>
+</code></pre></div></div>
+
+<h3 id="whats-next">What’s Next?</h3>
+<p>Next, I’ll be using Git for version control, and for storing on a GitHub repo (possibly to use with GitHub pages, or to use for automated deployment, we’ll see!)</p>]]></content><author><name></name></author><category term="jekyll" /><category term="docker" /><category term="git" /><category term="github" /><summary type="html"><![CDATA[We’ll setup a basic Docker installation, and use a container to run Jekyll to generate a static site blog, make a post, write a draft, and run a development server to test the blog.]]></summary></entry><entry><title type="html">Using Github with Jekyll</title><link href="http://0.0.0.0:4000/jekyll/git/github/2022/11/05/git-with-jekyll.html" rel="alternate" type="text/html" title="Using Github with Jekyll" /><published>2022-11-05T14:25:00-05:00</published><updated>2022-11-05T14:25:00-05:00</updated><id>http://0.0.0.0:4000/jekyll/git/github/2022/11/05/git-with-jekyll</id><content type="html" xml:base="http://0.0.0.0:4000/jekyll/git/github/2022/11/05/git-with-jekyll.html"><![CDATA[<p>We’ll setup a git repo to track our changes and push it to GitHub.</p>
+
+<p>##</p>
+
+<h3 id="whats-next">What’s Next?</h3>
+<p>Next, I’ll be using Git for version control, and for storing on a GitHub repo (possibly to use with GitHub pages, or to use for automated deployment, we’ll see!)</p>]]></content><author><name></name></author><category term="jekyll" /><category term="git" /><category term="github" /><summary type="html"><![CDATA[We’ll setup a git repo to track our changes and push it to GitHub.]]></summary></entry></feed>
