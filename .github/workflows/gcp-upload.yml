@@ -19,9 +19,3 @@ jobs:
       with:
         path: '/'
         destination: 'kilocrumbs.com'
-
-    # Example of using the output
-    - id: 'uploaded-files'
-      uses: 'foo/bar@main'
-      env:
-        files: '${{ steps.upload-folder.outputs.uploaded }}'
