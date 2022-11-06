@@ -56,8 +56,7 @@
 
 <hr />
 <h2 id="installing-docker">Installing Docker</h2>
-<p>I chose to install Docker using Docker’s apt responsitory. Full documentation here: https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
-[DockerEngineDocs] Docker Engine Documentation</p>
+<p>I chose to install Docker using Docker’s apt responsitory. <a href="https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository">Full documentation here</a></p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get update
 <span class="nb">sudo </span>apt-get <span class="nb">install</span> <span class="se">\</span>
     ca-certificates <span class="se">\</span>
@@ -74,8 +73,8 @@ curl <span class="nt">-fsSL</span> https://download.docker.com/linux/ubuntu/gpg 
 </code></pre></div></div>
 
 <h2 id="setup-jekyll">Setup Jekyll</h2>
-<p>Warning: As of this post, the latest version of the Jekyll container is missing a dependency (webrick) which is required for “jekyll serve”, so I am using 4.2.0 until this is resolved (https://github.com/envygeeks/jekyll-docker/pull/347)
-Instructions were adapted from current readme: https://github.com/envygeeks/jekyll-docker/blob/master/README.md</p>
+<p>Warning: As of this post, the latest version of the Jekyll container is missing a dependency (webrick) which is required for “jekyll serve”, so I am using 4.2.0 <a href="https://github.com/envygeeks/jekyll-docker/pull/347">until this is resolved</a>
+Instructions were adapted from current <a href="https://github.com/envygeeks/jekyll-docker/blob/master/README.md">readme</a></p>
 <h3 id="start-jekyll-for-first-time">Start Jekyll for first time</h3>
 <p>Create a directory for the jekyll data:</p>
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>jekyll
@@ -102,7 +101,7 @@ Instructions were adapted from current readme: https://github.com/envygeeks/jeky
   sh <span class="nt">-c</span> <span class="s2">"cd </span><span class="nv">$site_name</span><span class="s2"> &amp;&amp; jekyll serve"</span>
 </code></pre></div></div>
 
-<p>Open new blog at http://localhost:4000</p>
+<p>Open new blog at <a href="http://localhost:4000">http://localhost:4000</a></p>
 
 <h3 id="create-a-new-blog-post">Create a new Blog Post</h3>
 <p>Create a new markdown file in ‘_posts’ directory named:
@@ -119,7 +118,7 @@ Instructions were adapted from current readme: https://github.com/envygeeks/jeky
 <span class="gs">**Markdown content of my blog post goes here...**</span>
 </code></pre></div></div>
 
-<p>Save the file, and as long as the “jekyll serve” command is still running, reload http://localhost:4000 and see the new post.</p>
+<p>Save the file, and as long as the “jekyll serve” command is still running, reload <a href="http://localhost:4000">http://localhost:4000</a> and see the new post.</p>
 
 <h3 id="build-site-for-publishing">Build Site for Publishing</h3>
 <p>The version of the site that is built by “jekyll serve” is unsuitable for publishing.</p>
